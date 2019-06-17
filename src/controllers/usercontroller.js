@@ -7,9 +7,10 @@ exports.addUser = (req, res) => {
     email: req.body.email,
     password: req.body.password,
   });
-  console.log(newUser);
   newUser.save().then(() => {
-    res.status(201).send(newUser);
+    res.status(201).json(newUser.sanitise(function (users) {
+      console.log(users);
+    }));
   }).catch(e => res.send(e));
 };
 

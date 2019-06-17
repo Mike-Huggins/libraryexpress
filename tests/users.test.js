@@ -35,6 +35,32 @@ describe('/user', () => {
     });
   });
 
+  describe('POST /user', () => {
+    it('check for sanitised password', (done) => {
+      chai.request(server)
+        .post('/user')
+        .send({
+          firstname: 'Tame Impala',
+          lastname: 'Rock',
+          email: 'Tame@tame.com',
+          password: 'apples',
+        })
+        .end((error, res) => {
+          expect(error).to.equal(null);
+          expect(res.status).to.equal(201);
+
+          User.findById(res.body._id, (err, user) => {
+            expect(err).to.equal(null);
+            expect(user.firstname).to.equal('Tame Impala');
+            expect(user.lastname).to.equal('Rock');
+            expect(user.email).to.equal('Tame@tame.com');
+            expect(res.body).not.to.have.property('password');
+            done();
+          });
+        });
+    });
+  });
+
   /*describe('with artists in the database', () => {
     let artists;
     beforeEach((done) => {
