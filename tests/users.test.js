@@ -9,14 +9,14 @@ describe('/user', () => {
   });
 
   describe('POST /user', () => {
-    it('creates a new user in the database', (done) => {
+    xit('creates a new user in the database', (done) => {
       chai.request(server)
         .post('/user')
         .send({
           firstname: 'Tame Impala',
           lastname: 'Rock',
           email: 'Tame@tame.com',
-          password: 'apples',
+          password: 'apples100',
         })
         .end((error, res) => {
           expect(error).to.equal(null);
@@ -36,14 +36,14 @@ describe('/user', () => {
   });
 
   describe('POST /user', () => {
-    it('check for sanitised password', (done) => {
+    xit('check for sanitised password', (done) => {
       chai.request(server)
         .post('/user')
         .send({
           firstname: 'Tame Impala',
           lastname: 'Rock',
           email: 'Tame@tame.com',
-          password: 'apples',
+          password: 'apples100',
         })
         .end((error, res) => {
           expect(error).to.equal(null);
@@ -62,7 +62,38 @@ describe('/user', () => {
   });
 
   describe('POST /user', () => {
-    it('check for email validation', (done) => {
+    xit('check for email validation', (done) => {
+      chai.request(server)
+        .post('/user')
+        .send({
+          firstname: 'Tame Impala',
+          lastname: 'Rock',
+          email: 'Tametame.com',
+          password: 'apples100',
+        })
+        .end((error, res) => {
+          console.log(res.body.errors.email);
+          expect(res.body.errors.email).to.equal('invalid email address');
+          expect(res.status).to.equal(400);
+          done();
+        });
+    });
+    xit('check for password validation', (done) => {
+      chai.request(server)
+        .post('/user')
+        .send({
+          firstname: 'Tame Impala',
+          lastname: 'Rock',
+          email: 'Tame@tame.com',
+          password: 'apples',
+        })
+        .end((error, res) => {
+          expect(res.body.errors.password).to.equal('Password must be at least 8 characters long');
+          expect(res.status).to.equal(400);
+          done();
+        });
+    });
+    it('check for password  and email validation', (done) => {
       chai.request(server)
         .post('/user')
         .send({
@@ -72,10 +103,10 @@ describe('/user', () => {
           password: 'apples',
         })
         .end((error, res) => {
-          expect(res.errors.body.email).to.equal('invalid email address');
+          expect(res.body).to.deep.equal({ errors: { email: 'invalid email address', password: 'Password must be at least 8 characters long' } });
           expect(res.status).to.equal(400);
+          done();
         });
-      done();
     });
   });
 

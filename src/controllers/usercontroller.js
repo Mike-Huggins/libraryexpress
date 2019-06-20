@@ -10,11 +10,12 @@ exports.addUser = (req, res) => {
   newUser.save().then(() => {
     res.status(201).json(newUser.sanitise());
   }).catch((error) => {
-    if (error.errors.email.message === 'invalid email address') {
-    // is there an email error? if so emailError is the error.errors.email.message, otherwise it is null
+    if (error.name === 'ValidationError') {
+      const passwordError = error.errors.password ? error.errors.password.message : null;
       const emailError = error.errors.email ? error.errors.email.message : null;
       res.status(400).json({
         errors: {
+          password: passwordError,
           email: emailError,
         },
       });
