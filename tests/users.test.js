@@ -61,6 +61,24 @@ describe('/user', () => {
     });
   });
 
+  describe('POST /user', () => {
+    it('check for email validation', (done) => {
+      chai.request(server)
+        .post('/user')
+        .send({
+          firstname: 'Tame Impala',
+          lastname: 'Rock',
+          email: 'Tametame.com',
+          password: 'apples',
+        })
+        .end((error, res) => {
+          expect(res.errors.body.email).to.equal('invalid email address');
+          expect(res.status).to.equal(400);
+        });
+      done();
+    });
+  });
+
   /*describe('with artists in the database', () => {
     let artists;
     beforeEach((done) => {
